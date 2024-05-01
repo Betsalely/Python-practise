@@ -1,35 +1,47 @@
-print('Welcome to AskPython Quiz')
-answer=input('Are you ready to play the Quiz ? (yes/no) :')
+print('Welcome to Yair Python Quiz')
+answer=input('Are you willing to play the Quiz ? (yes/no) :')
 score=0
 total_questions=3
 
 if answer.lower()=='yes':
-    answer=input('Question 1: What is your Favourite programming language?')
-    if answer.lower()=='python':
-        score += 1
-        print('correct')
-    else:
-        print('Wrong Answer :(')
+    #ask the user and saves it
+    answer=input('Before we start what is your name?')
+    name = answer.lower()
 
-
-    answer=input('Question 2: Do you know any Python ')
+    #greets user and introduces quiz
+    answer=input('Ok ' + name+ ':Are you ready to play the Quiz which asks about Python ? (yes/no) :')
     if answer.lower()=='yes':
-        score += 1
-        print('correct')
+        print('Ok sweet')
+        #ask the user a question
+        answer=input('Question 1: What is the name of the programming language this was coded in? ')
+        if answer.lower()=='python':
+            score += 1
+            print('correct')
+        else:
+            #gives them the correct answer
+            print('Wrong Answer :(, it was Python')
+            
+        print('Question 2:`how do you write hello in a terminal using python? `')
+        print('A) print(hello)      B) Print(hello)')
+        print('C) print(\'hello\')      D) Print(\"helo\")')
+        answer=input('write one of the letters: ')
+        if answer.lower()=='c':
+            score += 1
+            print('correct')
+        else:
+            
+            print('Wrong Answer :(, it was C) print(\'hello\') s')
     else:
-        print('Wrong Answer :(')
-
-    answer=input('Question 3: What is the name of the person who made this?')
-    if answer.lower()=='askpython':
-        score += 1
-        print('correct')
-    else:
-        print('Wrong Answer :(')
+        print('aw man :(')
+        
+    
 
 print('Thankyou for Playing this small quiz game, you attempted',score,"questions correctly!")
 mark=(score/total_questions)*100
+mark = round(mark)
 print('Marks obtained:',mark)
 print('BYE!')
+#ends the quiz
 
 
 
