@@ -59,36 +59,44 @@ def pong():
     pen.goto(0, 260)
     pen.write("score", align="center", font=('Arial', 24, 'normal'))
     
-    # code for moving the left paddle
+    PADDLE_SPEED = 20
+    
     def left_paddle_up():
         y = left_paddle.ycor()
-        y += 90
-        left_paddle.sety(y)
-    
+        y += PADDLE_SPEED
+        if y < 250:  # Adjust this value if needed to limit paddle movement
+            left_paddle.sety(y)
+
+    # Function to move the left paddle down smoothly
     def left_paddle_down():
         y = left_paddle.ycor()
-        y -= 90
-        left_paddle.sety(y)
-    
-    # code for moving the right paddle
+        y -= PADDLE_SPEED
+        if y > -240:  # Adjust this value if needed to limit paddle movement
+            left_paddle.sety(y)
+
+    # Function to move the right paddle up smoothly
     def right_paddle_up():
         y = right_paddle.ycor()
-        y += 90
-        right_paddle.sety(y)
-    
+        y += PADDLE_SPEED
+        if y < 250:  # Adjust this value if needed to limit paddle movement
+            right_paddle.sety(y)
+
+    # Function to move the right paddle down smoothly
     def right_paddle_down():
         y = right_paddle.ycor()
-        y -= 90
-        right_paddle.sety(y)
-    
+        y -= PADDLE_SPEED
+        if y > -240:  # Adjust this value if needed to limit paddle movement
+            right_paddle.sety(y)
     # Assign keys to play
     window.listen()
     window.onkeypress(left_paddle_up, 'w')
     window.onkeypress(left_paddle_down, 's')
     window.onkeypress(right_paddle_up, 'Up')
     window.onkeypress(right_paddle_down, 'Down')
-    window.onkeypress(pong, 'q')
-    
+
+    # Exit game on 'q' key press
+    window.onkeypress(window.bye, 'q')
+        
     while True:
         window.update()
     
@@ -99,14 +107,15 @@ def pong():
         # border set up
         if ball.ycor() > 290:
             ball.sety(290)
-            ballydirection *= -1
+            ballydirection *=-1.01
         if ball.ycor() < -290:
             ball.sety(-290)
-            ballydirection *= -1
+            ballydirection *= -1.01
             
         if ball.xcor() > 390:
             ball.goto(0, 0)
-            ballxdirection *= -1
+            ballxdirection *= 0
+            ballxdirection += 2
             player_a_score += 1
             pen.clear()
             pen.write("Player A: {}                    Player B: {} ".format(player_a_score, player_b_score), align="center", font=('Monaco', 24, "normal"))
@@ -114,7 +123,8 @@ def pong():
     
         if ball.xcor() < -390:  # Left width paddle Border
             ball.goto(0, 0)
-            ballxdirection *= -1
+            ballxdirection *= 0
+            ballxdirection += 2
             player_b_score += 1
             pen.clear()
             pen.write("Player A: {}                    Player B: {} ".format(player_a_score, player_b_score), align="center", font=('Monaco', 24, "normal"))
@@ -123,17 +133,21 @@ def pong():
         # Handling the collisions with paddles.
         if (ball.xcor() > 340) and (ball.xcor() < 350) and (ball.ycor() < right_paddle.ycor() + 40 and ball.ycor() > right_paddle.ycor() - 40):
             ball.setx(340)
-            ballxdirection *= -1
+            ballxdirection *= -1.2
+            
             os.system("afplay paddle.wav&")
     
         if (ball.xcor() < -340) and (ball.xcor() > -350) and (ball.ycor() < left_paddle.ycor() + 40 and ball.ycor() > left_paddle.ycor() - 40):
             ball.setx(-340)
-            ballxdirection *= -1
+            ballxdirection *= -1.2
+        
+
+
             os.system("afplay paddle.wav&")
 
 
 
-
+ 
 print('Welcome to Yair Python Quiz')
 answer=input('Are you willing to play the Quiz ? (yes/no) :')
 score=0
