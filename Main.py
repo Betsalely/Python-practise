@@ -1,14 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
 def pong():
     import turtle as t
     import os
