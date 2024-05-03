@@ -48,7 +48,7 @@ def pong():
     ball.penup()
     ball.goto(5, 5)
     ballxdirection = 2
-    ballydirection = 2
+    ballydirection = 1.5
     
     # Code for creating pen for scorecard update
     pen = t.Turtle()
@@ -107,10 +107,10 @@ def pong():
         # border set up
         if ball.ycor() > 290:
             ball.sety(290)
-            ballydirection *=-1.01
+            ballydirection *=-1
         if ball.ycor() < -290:
             ball.sety(-290)
-            ballydirection *= -1.01
+            ballydirection *= -1
             
         if ball.xcor() > 390:
             ball.goto(0, 0)
