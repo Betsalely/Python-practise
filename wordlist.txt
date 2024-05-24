@@ -1,3 +1,4 @@
+a
 aardvark
 aardwolf
 aaron
@@ -24963,6 +24964,7 @@ hysteric
 hysterical
 hysterically
 hysterics
+i
 iambic
 iambus
 iatrogenic
@@ -51562,7 +51564,7 @@ thaw
 thawed
 thawing
 thaws
-the
+thy
 theatre
 theatres
 theatrical
@@ -51909,7 +51911,7 @@ thwart
 thwarted
 thwarting
 thwarts
-thy
+the
 thyme
 thymus
 thyristor
