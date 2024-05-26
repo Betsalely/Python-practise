@@ -4,7 +4,7 @@ import random
 
 
 
-print('as of right now you can only do basic function like times, add, subtract, divide and square and the numbers have to be under 12')
+print('as of right now you can only do basic function like times, add, subtract, divide and square and the numbers have to be under 100. seperate two digits numbers with a hyphen like twnety-one')
 
 while True:
     
@@ -13,17 +13,33 @@ while True:
 
 
 
-    inputs = input('Type in you word math problem: ')
+    inputs = input('Type in you word math problem (no punctuation): ')
 
     list_input = inputs.split(" ")
+    list_input = [i.lower() for i in list_input]
+    numbers_l = [
+    'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 
+    'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two', 
+    'twenty-three', 'twenty-four', 'twenty-five', 'twenty-six', 'twenty-seven', 'twenty-eight', 'twenty-nine', 
+    'thirty', 'thirty-one', 'thirty-two', 'thirty-three', 'thirty-four', 'thirty-five', 'thirty-six', 'thirty-seven', 
+    'thirty-eight', 'thirty-nine', 'forty', 'forty-one', 'forty-two', 'forty-three', 'forty-four', 'forty-five', 
+    'forty-six', 'forty-seven', 'forty-eight', 'forty-nine', 'fifty', 'fifty-one', 'fifty-two', 'fifty-three', 
+    'fifty-four', 'fifty-five', 'fifty-six', 'fifty-seven', 'fifty-eight', 'fifty-nine', 'sixty', 'sixty-one', 
+    'sixty-two', 'sixty-three', 'sixty-four', 'sixty-five', 'sixty-six', 'sixty-seven', 'sixty-eight', 'sixty-nine', 
+    'seventy', 'seventy-one', 'seventy-two', 'seventy-three', 'seventy-four', 'seventy-five', 'seventy-six', 
+    'seventy-seven', 'seventy-eight', 'seventy-nine', 'eighty', 'eighty-one', 'eighty-two', 'eighty-three', 
+    'eighty-four', 'eighty-five', 'eighty-six', 'eighty-seven', 'eighty-eight', 'eighty-nine', 'ninety', 
+    'ninety-one', 'ninety-two', 'ninety-three', 'ninety-four', 'ninety-five', 'ninety-six', 'ninety-seven', 
+    'ninety-eight', 'ninety-nine'
+]
 
-    numbers_l = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
-    numbers_n = [0,1,2,3,4,5,6,7,8,9,10,11,12]
+    numbers_n = list(range(100))
+
     operations_square = ['squared']
-    operations_plus = ['add', 'plus', 'sum', 'total']
-    operations_minus = ['subtract', 'take away', 'minus']
+    operations_plus = ['add', 'plus', 'sum', 'total', 'more']
+    operations_minus = ['subtract', 'take', 'away', 'minus']
     operations_times = ['times', 'multiply', 'product']
-    operations_divide = ['divide']
+    operations_divide = ['divide', 'divided']
    
     
 
