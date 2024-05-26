@@ -21,8 +21,7 @@ class NumberGuessingApp:
         messagebox.showinfo("Rules", "Here are the rules:\n"
                                       "1. I get 10 guesses to get your number.\n"
                                       "2. You can't lie at any point.\n"
-                                      "3. 'L' stands for lower and 'H' stands for higher.\n"
-                                      "4. If I got it correct just type 'win'.")
+                                      "3. If I got it correct you lose.")
 
         self.upper_limit = 99
         self.lower_limit = 1
