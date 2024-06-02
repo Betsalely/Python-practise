@@ -19,6 +19,7 @@ class Minesweeper(tk.Tk):
         self.canvas.bind("<Button-1>", self.left_click)
         self.canvas.bind("<Button-3>", self.right_click)
 
+
     def create_grid(self):
         for i in range(self.columns):
             for j in range(self.rows):

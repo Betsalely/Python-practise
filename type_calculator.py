@@ -36,10 +36,10 @@ while True:
     numbers_n = list(range(100))
 
     operations_square = ['squared']
-    operations_plus = ['add', 'plus', 'sum', 'total', 'more']
-    operations_minus = ['subtract', 'take', 'away', 'minus']
-    operations_times = ['times', 'multiply', 'product']
-    operations_divide = ['divide', 'divided']
+    operations_plus = ['add', 'plus', 'sum', 'total', 'more', 'started', 'ended']
+    operations_minus = ['subtract', 'take', 'away', 'minus', 'lose', 'lost', 'gave', 'gives']
+    operations_times = ['times', 'multiply', 'product', 'multiplied', 'each']
+    operations_divide = ['divide', 'divided', 'split']
    
     
 
@@ -63,8 +63,8 @@ while True:
            
     
 
-    # print("Numbers: ", listOfInputNumbers)
-    # print("Operations: ", listOfOperations)
+    print("Numbers: ", listOfInputNumbers)
+    print("Operations: ", listOfOperations)
 
         
     if len(listOfInputNumbers) == len(listOfOperations) + 1:
