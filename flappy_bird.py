@@ -79,6 +79,12 @@ def draw_pipes(column_pos, gap_start):
             pygame.draw.rect(screen, red, (column_pos * square_size, row * square_size, square_size, square_size))
             pygame.draw.rect(screen, black, (column_pos * square_size, row * square_size, square_size, square_size), 1)
 
+def check_collision(current_pos, column_pos, gap_start):
+    if column_pos == 6:
+        if current_pos < gap_start or current_pos >= gap_start + 4:
+            return True
+    return False
+
 gap_start = np.random.randint(0, row_count - 5)  # Randomly initialize the gap start position
 floor_pattern = [((col * 18) % 256, 0, 0) for col in range(col_count)]
 column_pos = col_count - 1  # Start column at the rightmost position
@@ -107,16 +113,9 @@ while running:
     if not upper:
         current_pos = draw_player(current_pos, "DOWN")
 
-        if current_pos == row_count-2:
-            break
+    if check_collision(current_pos, column_pos, gap_start):
+        break
 
-     
+    clock.tick(7)
 
-    clock.tick(5)
-
-
-
-
-
-clock.tick(1)
 pygame.quit()
