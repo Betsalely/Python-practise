@@ -101,12 +101,22 @@ while running:
                 upper = True
 
     floor_pattern, column_pos = move_floor(floor_pattern, column_pos, gap_start)
-    if column_pos == col_count - 1:  # Once the column moves back to the rightmost position, reset the gap
+    if column_pos == col_count-1:  
         gap_start = np.random.randint(0, row_count - 5)  # Randomize the gap start position
 
     if not upper:
         current_pos = draw_player(current_pos, "DOWN")
 
+        if current_pos == row_count-2:
+            break
+
+     
+
     clock.tick(5)
 
+
+
+
+
+clock.tick(1)
 pygame.quit()
