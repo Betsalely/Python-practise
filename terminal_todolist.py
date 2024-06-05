@@ -1,6 +1,3 @@
-import typing
-
-
 tasks = []
 
 def display_tasks():

@@ -35,40 +35,67 @@
 
 #     print('\n')
 
+import math
 
-import sympy as sp
+list_of_gradients = []
 
-def approximate_gradient(equation_str, variable_str='x', h=1e-5):
-    variable = sp.symbols(variable_str)
-    equation = sp.sympify(equation_str)
+def tangent_calculation(x,y,x1,y1):
+    gradientY1 = float(y - y1)
+    gradientX1 = float(x - x1)
+    gradient = float(gradientY1/gradientX1)
+    return gradient
 
-    def secant_slope(x_value, h):
-        # Define the function from the equation
-        function = sp.lambdify(variable, equation)
-        
-        # Compute the function values at x_value and x_value + h
-        f_x = function(x_value)
-        f_x_h = function(x_value + h)
-        
-        # Compute the slope of the secant line
-        slope = (f_x_h - f_x) / h
-        return slope
+def safe_eval(equation, x):
+    allowed_names = {"x": x, "math": math}
+    code = compile(equation, "<string>", "eval")
+    for name in code.co_names:
+        if name not in allowed_names:
+            raise NameError(f"Use of {name} is not allowed")
+    return eval(code, {"__builtins__": {}}, allowed_names)
 
-    return secant_slope
-
-def gradient(equation_value, x_value):
-    print(f"Gradient at x = {x_value}: {equation_value}")
+equation = input('Enter equation : ').strip()
+if equation.lower().startswith('y ='):
+    equation = equation[3:].strip()
+else:
+    print("Please enter an equation in the form 'y = ...'")
+    exit()
 
 while True:
-    curve_equation = input('Curve equation: ')
-    tangent_point = input('Tangent point (separate with a comma and a space): ')
-    tangent_point = tangent_point.split(',')
 
-    x_value = float(tangent_point[0].strip())
+        try:
+            x_input = input('Enter x coordinate (or type "exit" to quit): ')
+            # x_input = str(i)
+            if x_input.lower() == "exit":
+                break
+            x = int(x_input)
+            y = safe_eval(equation, x)
+
+            x1 = float(x+0.01)
+            y1 = safe_eval(equation, x1)
+
+            gradient_of_tangent = tangent_calculation(x,y,x1,y1)
+            print(gradient_of_tangent)
+            list_of_gradients.append(gradient_of_tangent)
+
+            x2 = float(x-0.01)
+            y2 = safe_eval(equation, x2)
+
+            gradient_of_tangent = tangent_calculation(x,y,x1,y1)
+            print(gradient_of_tangent)
+            list_of_gradients.append(gradient_of_tangent)
+        except ValueError:
+            print("Invalid input. Please enter a valid integer for x.")
+        except NameError as e:
+            print(f"Error in equation: {e}")
+        except Exception as e:
+            print(f"Error evaluating equation for x = {x}: {e}")
     
-    secant_slope_function = approximate_gradient(curve_equation)
-    
-    equation_value = secant_slope_function(x_value, 10**-5)
-    
-    gradient(equation_value, x_value)
-    print('\n')
+
+
+print(list_of_gradients)
+list_of_differences = []
+# for i in range(len(list_of_gradients)-1):
+#     dif = abs(list_of_gradients[i] - list_of_gradients[i+1])
+#     list_of_differences.append(dif)
+
+# print(list_of_differences)
