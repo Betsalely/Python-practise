@@ -38,8 +38,8 @@ def draw_floor(floor_pattern):
         pygame.draw.rect(screen, black, (col * square_size, (row_count - 1) * square_size, square_size, square_size), 1)
 
 def move_floor(floor_pattern, column_pos, gap_start):
-    screen.fill(black)  # Clear the screen before redrawing
-    draw_board(board)   # Redraw the board
+    screen.fill(black)  
+    draw_board(board)  
     
     # Move floor pattern and column position to the left
     floor_pattern = floor_pattern[1:] + floor_pattern[:1]
@@ -83,9 +83,12 @@ def check_collision(current_pos, column_pos, gap_start):
     if column_pos == 6:
         if current_pos < gap_start or current_pos >= gap_start + 4:
             return True
+    if current_pos >= 16:
+        return True    
+
     return False
 
-gap_start = np.random.randint(0, row_count - 5)  # Randomly initialize the gap start position
+gap_start = np.random.randint(0, row_count - 5) 
 floor_pattern = [((col * 18) % 256, 0, 0) for col in range(col_count)]
 column_pos = col_count - 1  # Start column at the rightmost position
 
