@@ -25,6 +25,7 @@ green = (0, 200, 0)
 # Initialize screen
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
+font = pygame.font.SysFont(None, 36)
 
 # Snake initialization
 snake_pos = [(5, 5), (5, 4), (5, 3)]  # List of tuples (row, col)
@@ -55,6 +56,10 @@ def draw_food():
     rainbow_color = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
     rainbow_color = tuple(int(i * 255) for i in rainbow_color)
     pygame.draw.rect(screen, rainbow_color, (food_pos[1] * square_size, food_pos[0] * square_size, square_size, square_size))
+
+def draw_score(score):
+    score_text = font.render(f"Score: {score}", True, white)
+    screen.blit(score_text, (10, 10))
 
 
 def move_snake():
@@ -108,6 +113,7 @@ while running:
     draw_board()
     draw_snake()
     draw_food()
+    draw_score(score)
     pygame.display.update()
     clock.tick(5)  # Control the speed of the snake
 

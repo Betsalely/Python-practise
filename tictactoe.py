@@ -41,7 +41,7 @@ def draw_board(board):
     screen.fill(white)
     for c in range(3):
         for r in range(3):
-            pygame.draw.rect(screen, blue, (c * square_size, r * square_size, square_size, square_size), 3)
+            pygame.draw.rect(screen, blue, (c * square_size, r * square_size, square_size, square_size),3)
             if board[r][c] == 1:
                 pygame.draw.line(screen, red, (c * square_size + 15, r * square_size + 15), ((c + 1) * square_size - 15, (r + 1) * square_size - 15), 15)
                 pygame.draw.line(screen, red, (c * square_size + 15, (r + 1) * square_size - 15), ((c + 1) * square_size - 15, r * square_size + 15), 15)
@@ -76,6 +76,7 @@ pygame.display.set_caption("Tic-Tac-Toe")
 
 # Draw the initial board
 draw_board(board)
+print_board(board)
 
 # Game loop
 while not game_over:
@@ -103,6 +104,7 @@ while not game_over:
                 
                 turn *= -1
                 draw_board(board)
+                print_board(board)
     
     if game_over:
         pygame.time.wait(3000)

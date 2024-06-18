@@ -28,7 +28,8 @@ def get_next_open_row(board, col):
             return r
 
 def print_board(board):
-    print(np.flip(board, 0))
+    # print(np.flip(board, 0))
+    pass
 
 def winning_move(board, piece):
     # Check horizontal locations for win

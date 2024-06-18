@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 
-
-
 coordinates = 100
 
 while True:
