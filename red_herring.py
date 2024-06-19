@@ -133,6 +133,6 @@ while running:
     if check_collision(current_pos, column_pos, gap_start):
         break
 
-    clock.tick(7)
+    clock.tick(5)
 
 pygame.quit()

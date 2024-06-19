@@ -1,96 +1,187 @@
-import pygame
+from __future__ import division
+import time
+import pickle
+import gzip
+from random import randint
+from scipy import misc
+from scipy import special
 import numpy as np
-import random
+import pygame
 
 # Constants
-WIDTH, HEIGHT = 480, 480  # Canvas size (10x scaling of 28x28)
-PIXEL_SIZE = WIDTH // 16
-BUTTON_WIDTH, BUTTON_HEIGHT = 100, 40
-SCREEN_WIDTH, SCREEN_HEIGHT = WIDTH, HEIGHT + BUTTON_HEIGHT
+WIDTH, HEIGHT = 280, 280
+PIXEL_SIZE = 10
 WHITE = (255, 255, 255)
-GREY = (200, 200, 200)
 BLACK = (0, 0, 0)
 BUTTON_COLOR = (100, 100, 255)
 BUTTON_TEXT_COLOR = WHITE
-BRIGHTNESS_INCREMENT = 0.1
+SCREEN_WIDTH, SCREEN_HEIGHT = WIDTH, HEIGHT + 100
 
-# Initialize pygame
+#Import from MNIST database
+START_TIME = time.time()
+ft = gzip.open('data_training', 'rb')
+TRAINING = pickle.load(ft, encoding='latin1')
+ft.close()
+ft = gzip.open('data_testing', 'rb')
+TESTING = pickle.load(ft, encoding='latin1')
+ft.close()
+
+print('Import duration ' + str(round((time.time() - START_TIME), 2)) + 's')
+print('----')
+
+class Network:
+
+    def __init__(self, num_hidden):
+        self.input_size = 784
+        self.output_size = 10
+        self.num_hidden = num_hidden
+        self.best = 0.
+        self.same = 0
+
+        hidden_layer = np.random.rand(self.num_hidden, self.input_size + 1) / self.num_hidden
+        output_layer = np.random.rand(self.output_size, self.num_hidden + 1) / self.output_size
+        self.layers = [hidden_layer, output_layer]
+        self.iteration = 0.
+
+        print('Initialization with random weights and bias')
+        print('-----')
+
+    def train(self, batchsize, training):
+        start_time = time.time()
+        print('Network training with ' + str(batchsize) + ' examples')
+        print('Until convergence (20 iterations without improvements)')
+        print('-----')
+        inputs = training[0][0:batchsize]
+        targets = np.zeros((batchsize, 10))
+        for i in range(batchsize):
+            targets[i, training[1][i]] = 1
+
+        iterations_without_improvement = 0
+        while iterations_without_improvement < 20:
+            for input_vector, target_vector in zip(inputs, targets):
+                self.backpropagate(input_vector, target_vector)
+            self.iteration += 1
+            accu = self.accu(TESTING)
+            message = 'Iteration ' + str(int(self.iteration)).zfill(2) + \
+                ' (' + str(round(time.time()-start_time)).zfill(2) + 's) '
+            message += 'Precision:' + str(accu[1]).zfill(4) + '%   Min:' + \
+                str(accu[0]).zfill(4) + '% (' + str(int(accu[2])) + ')'
+            if accu[0] > self.best:
+                iterations_without_improvement = 0
+                self.best = accu[0]
+                message += ' improvement'
+                if accu[0] > 97:
+                    self.sauv(file_name='ntMIN_'+str(accu))
+                    message += 'S'
+            else:
+                iterations_without_improvement += 1
+            print(message)
+
+        print('20 Iterations without improvements.')
+        print('Total duration: ' + str(round((time.time() - start_time), 2)) + 's')
+
+
+    def feed_forward(self, input_vector):
+        outputs = []
+        for layer in self.layers:
+            input_with_bias = np.append(input_vector, 1)
+            output = np.inner(layer, input_with_bias)
+            output = special.expit(output)
+            outputs.append(output)
+            input_vector = output
+        return outputs
+
+    def backpropagate(self, input_vector, target):
+        c = 1./(self.iteration + 10)
+        hidden_outputs, outputs = self.feed_forward(input_vector)
+        output_deltas = outputs * (1 - outputs) * (outputs - target)
+        hidden_deltas = hidden_outputs * (1 - hidden_outputs) * \
+            np.dot(np.delete(self.layers[-1], 300, 1).T, output_deltas)
+        self.layers[-1] -= c*np.outer(output_deltas, np.append(hidden_outputs, 1))
+        self.layers[0] -= c*np.outer(hidden_deltas, np.append(input_vector, 1))
+
+    def predict(self, input_vector):
+        return self.feed_forward(input_vector)[-1]
+
+    def predict_one(self, input_vector):
+        return np.argmax(self.feed_forward(input_vector)[-1])
+
+    def sauv(self, file_name=''):
+        if file_name == '':
+            file_name = 'nt_'+str(self.accu(TESTING)[0])
+        sauvfile = self.layers
+        f = open(file_name, 'wb')
+        pickle.dump(sauvfile, f)
+        f.close()
+
+    def load(self, file_name):
+        f = open(file_name, 'rb')
+        self.layers = pickle.load(f, encoding='latin1')
+        f.close()
+
+    def accu(self, testing):
+        res = np.zeros((10, 2))
+        for k in range(len(testing[1])):
+            if self.predict_one(testing[0][k]) == testing[1][k]:
+                res[testing[1][k]] += 1
+            else:
+                res[testing[1][k]][1] += 1
+        total = np.sum(res, axis=0)
+        each = [res[k][0]/res[k][1] for k in range(len(res))]
+        min_c = sorted(range(len(each)), key=lambda k: each[k])[0]
+        return np.round([each[min_c]*100, total[0]/total[1]*100, min_c], 2)
+
+nt1 = Network(300)
+nt1.train(600, TRAINING)
+
+# Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("28x28 Pixel Canvas")
+pygame.display.set_caption('Draw a Digit')
 
-# Canvas data
-canvas = np.zeros((16, 16), dtype=np.float32)
+def draw_digit(digit):
+    for i in range(28):
+        for j in range(28):
+            if digit[i*28 + j] > 0:
+                pygame.draw.rect(screen, BLACK, (j*PIXEL_SIZE, i*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE))
 
-weights_layer1 = [random.uniform(-3.99, 3.99) for _ in range(265*16)]
-weights_layer2 = [random.uniform(-3.99, 3.99) for _ in range(16*16)]
-weights_layer3 = [random.uniform(-3.99, 3.99) for _ in range(16*10)]
+def clear_screen():
+    screen.fill(WHITE)
 
-hidden_layer1 = [0.00] * 16
-hidden_layer2 = [0.00] * 16
+def run():
+    clock = pygame.time.Clock()
+    drawing = False
+    digit = np.zeros(784, dtype=np.uint8)
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                drawing = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                drawing = False
+                digit = np.reshape(digit, (28, 28)).flatten()
+            elif event.type == pygame.MOUSEMOTION:
+                if drawing:
+                    x, y = event.pos
+                    x //= PIXEL_SIZE
+                    y //= PIXEL_SIZE
+                    if 0 <= x < 28 and 0 <= y < 28:
+                        digit[y*28 + x] = 1
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    clear_screen()
+                    pred = nt1.predict_one(digit)
+                    print(f"Predicted digit: {pred}")
+                elif event.key == pygame.K_c:
+                    clear_screen()
+                    digit = np.zeros(784, dtype=np.uint8)
 
-def draw_grid():
-    for x in range(0, WIDTH, PIXEL_SIZE):
-        pygame.draw.line(screen, GREY, (x, 0), (x, HEIGHT))
-    for y in range(0, HEIGHT, PIXEL_SIZE):
-        pygame.draw.line(screen, GREY, (0, y), (WIDTH, y))
+        screen.fill(WHITE)
+        draw_digit(digit)
+        pygame.display.flip()
+        clock.tick(60)
 
-# Draw canvas function
-def draw_canvas():
-    for y in range(16):
-        for x in range(16):
-            brightness = canvas[y, x] * 255  # Scale to 0-255 for display
-            color = (brightness, brightness, brightness)
-            pygame.draw.rect(screen, color, (x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE))
-
-# Draw button function
-def draw_button():
-    button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, HEIGHT + 10, BUTTON_WIDTH, BUTTON_HEIGHT)
-    pygame.draw.rect(screen, BUTTON_COLOR, button_rect)
-    font = pygame.font.Font(None, 36)
-    text = font.render('Predict', True, BUTTON_TEXT_COLOR)
-    text_rect = text.get_rect(center=button_rect.center)
-    screen.blit(text, text_rect)
-    return button_rect
-
-# Predict function
-def predict(canvas):
-    sum = 0
-    for i in range(len(canvas)):
-        for j in range(len(canvas)):
-            weights_added = canvas[i][j] * weights_layer1[j]
-            sum += weights_added
-    print(sum)
-    print(sigmoid(sum))
-    
-
-def sigmoid(x):
-    s = 1 / (1 + np.exp(-x))
-    return s
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if pygame.mouse.get_pressed()[0]:  # Left mouse button is pressed
-            x, y = pygame.mouse.get_pos()
-            if y < HEIGHT:
-                grid_x, grid_y = x // PIXEL_SIZE, y // PIXEL_SIZE
-                if 0 <= grid_x < 16 and 0 <= grid_y < 16:
-                    canvas[grid_y, grid_x] = min(canvas[grid_y, grid_x] + BRIGHTNESS_INCREMENT, 1.0)  # Increase brightness
-
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button is clicked
-            x, y = pygame.mouse.get_pos()
-            button_rect = draw_button()
-            if button_rect.collidepoint(x, y):
-                predict(canvas)
-
-    screen.fill(BLACK)
-    draw_canvas()
-    draw_grid()
-    draw_button()
-    pygame.display.flip()
-
+run()
