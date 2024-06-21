@@ -49,7 +49,7 @@ class Network:
     def train(self, batchsize, training):
         start_time = time.time()
         print('Network training with ' + str(batchsize) + ' examples')
-        print('Until convergence (20 iterations without improvements)')
+        print('Until convergence (80 iterations without improvements)')
         print('-----')
         inputs = training[0][0:batchsize]
         targets = np.zeros((batchsize, 10))
@@ -57,7 +57,7 @@ class Network:
             targets[i, training[1][i]] = 1
 
         iterations_without_improvement = 0
-        while iterations_without_improvement < 20:
+        while iterations_without_improvement < 80:
             for input_vector, target_vector in zip(inputs, targets):
                 self.backpropagate(input_vector, target_vector)
             self.iteration += 1
@@ -65,7 +65,7 @@ class Network:
             message = 'Iteration ' + str(int(self.iteration)).zfill(2) + \
                 ' (' + str(round(time.time()-start_time)).zfill(2) + 's) '
             message += 'Precision:' + str(accu[1]).zfill(4) + '%   Min:' + \
-                str(accu[0]).zfill(4) + '% (' + str(int(accu[2])) + ')'
+                str(accu[0]).zfill(4) + '% '
             if accu[0] > self.best:
                 iterations_without_improvement = 0
                 self.best = accu[0]
